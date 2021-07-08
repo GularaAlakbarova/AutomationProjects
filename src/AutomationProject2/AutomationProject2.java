@@ -28,7 +28,7 @@ public class AutomationProject2 {
 
         String [] csvCell;
 
-        CSVReader csvReader = new CSVReader(new FileReader("MOCK_DATA.csv"));
+        CSVReader csvReader = new CSVReader(new FileReader("C:\\Users\\gular\\IdeaProjects\\AutomationProjects\\src\\AutomationProject2\\MOCK_DATA.csv"));
 
         while ((csvCell = csvReader.readNext()) != null){
 
