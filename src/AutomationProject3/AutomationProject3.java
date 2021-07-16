@@ -41,7 +41,7 @@ public class AutomationProject3 {
         //4. Choose “Tesla” for  Make.
         Select make = new Select(driver.findElement(By.name("make")));
         make.selectByValue("Tesla");
-        make.selectByValue("Honda"); //The UI of the website ocaasionally blocked the model dropdown nemue. To ensure, that the program will run, I included
+        make.selectByValue("Honda"); //The UI of the website occasionally blocked the model dropdown nemue. To ensure, that the program will run, I included
                                      // switching to "Honda" and then back to "Tesla". That way UI is not bloking the dropdown.
         make.selectByValue("Tesla");
 
