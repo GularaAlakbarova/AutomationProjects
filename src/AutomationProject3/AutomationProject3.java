@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
 
-import static AutomationProject3.Utilities.getElementsText;
 
 public class AutomationProject3 {
 
@@ -96,13 +95,15 @@ public class AutomationProject3 {
         //11.	Click on “Show me x Results” button.
         driver.findElement(By.xpath("//span[@class = 'totalRecordsText']")).click();
 
+        Thread.sleep(1000);
+
         //12.	Verify the results count by getting the actual number of results displayed
         // in the page by getting the count of WebElements that represent each result
 
-        List<WebElement> elements1 = driver.findElements(By.cssSelector("article[id*='listing_']"));
-         for (WebElement element : elements1) { //I am doing it to fool around the Selenium bug. This is like bringing a sacrifice to the mighty Selenium,
-             //in order it allows to further work. For some reason the number of elements is (actual_elements*2)+1, and it displays as 25 elements instead of 12
-         }
+//        List<WebElement> elements1 = driver.findElements(By.cssSelector("article[id*='listing_']"));
+//         for (WebElement element : elements1) { //I am doing it to fool around the Selenium bug. This is like bringing a sacrifice to the mighty Selenium,
+//             //in order it allows to further work. For some reason the number of elements is (actual_elements*2)+1, and it displays as 25 elements instead of 12
+//         }
 
         List<WebElement> resultElements = driver.findElements(By.xpath("//*[contains(@id,'listing_')]"));   //Identify  the elements on web page //*[contains(@id,'listing_')]
 
@@ -135,7 +136,7 @@ public class AutomationProject3 {
 //        List <WebElement> price = new ArrayList<>();
 
         List<String> a = new ArrayList<>();
-        List<WebElement> price  = driver.findElements(By.xpath("//span[@class = 'srp-list-item-price']"));
+        List<WebElement> price  = driver.findElements(By.xpath("//span[@class = 'srp-list-item-price']")); //
 
 
 
@@ -158,11 +159,12 @@ public class AutomationProject3 {
 
         //16.	Verify that the results are displayed from high to low price.
 
-        List <WebElement> sortedPrices = driver.findElements(By.xpath("//span[@class = 'srp-list-item-price']"));
+        List <WebElement> sortedPrices = driver.findElements(By.xpath("//*//div[@class='srp-list-container  srp-list-container--srp']/child::article [contains(@id,\"listing_\")]//a/div[1]/div/span")); //   for price
         List<String> sortedPricesToCompare = new ArrayList<>();
 
         for(int sp = 0; sp < sortedPrices.size(); sp++){
-            if((!sortedPrices.get(sp).getText().contains("Call for Price")) && (!sortedPrices.get(sp).equals(driver.findElement(By.xpath("/html/body/div[2]/div[3]/div/div[2]/div/main/div[2]/div/div[3]/div[2]/div/div[2]/div/article"))))) {
+
+            if((!sortedPrices.get(sp).getText().contains("Call for Price"))) {
                 sortedPricesToCompare.add(sortedPrices.get(sp).getText());
 
                 System.out.println("Sorted prices to compare" + sortedPrices.get(sp).getText());
@@ -174,38 +176,43 @@ public class AutomationProject3 {
 
         System.out.println(expectedPriceDistribution);
 
-//        Assert.assertEquals(sortedPricesToCompare, expectedPriceDistribution);
+     Assert.assertEquals(sortedPricesToCompare, expectedPriceDistribution);
 
         //17.	Choose “Mileage - Low to High” option from Sort By menu
 
         Select actualMileage = new Select(driver.findElement(By.xpath("//select[@aria-label= 'SelectSort']")));
         actualMileage.selectByValue("MILEAGE_ASC");
+        Thread.sleep(1000);
 
         //18.	Verify that the results are displayed from low to high mileage.
 
-        List <WebElement> sortedMileage = driver.findElements(By.xpath("//span[@class='srp-list-item-basic-info-value']"));
-        List<String> mileageLowToHigh = new ArrayList<>();
+        List <WebElement> sortedMileage = driver.findElements(By.xpath("//*//div[@class='srp-list-container  srp-list-container--srp']/child::article [contains(@id,\"listing_\")]//div[4]/div[2]/span[1]"));
+        List<Integer> mileageLowToHigh = new ArrayList<>();
+
+
 
         for(int m = 0; m < sortedMileage.size(); m++){
+            if (sortedMileage.get(m).getText().contains("miles")){
 
-            if(sortedMileage.get(m).getText().contains("miles")){
-                mileageLowToHigh.add(sortedMileage.get(m).getText());
+                String[] splitMileage = sortedMileage.get(m).getText().split(" ");
 
+               Integer mileage = Integer.parseInt(splitMileage[1].replaceAll("[^-?0-9]+", "").trim());
+//                mileageLowToHigh.add(mileage);
+                System.out.println("mileage " + mileage);
+                System.out.println("splitMileage" + splitMileage);
 
-                System.out.println(sortedMileage.get(m).getText());
             }
-        }
 
-        List<String> expectedMileageDistribution = new ArrayList<>(mileageLowToHigh);
+          }
+
+        List<Integer> expectedMileageDistribution = new ArrayList<>(mileageLowToHigh);
         Collections.sort(expectedMileageDistribution);
+
+        System.out.println(mileageLowToHigh);
 
         System.out.println("Expected mileage distribution " + expectedMileageDistribution);
 
-       // Assert.assertEquals(mileageLowToHigh, expectedMileageDistribution);
-
-                //getElementsText(driver.findElements(By.xpath("//span[@class='srp-list-item-basic-info-value']")));
-//       Assert.assertEquals(mileageLowToHigh, actualMileage);
-
+        Assert.assertEquals(mileageLowToHigh, expectedMileageDistribution);
 
         Thread.sleep(1000);
 
@@ -215,19 +222,27 @@ public class AutomationProject3 {
         Select yearNewToOld = new Select(driver.findElement(By.xpath("//select[@aria-label= 'SelectSort']")));
         yearNewToOld.selectByValue("YEAR_DESC");
 
+        Thread.sleep(1000);
+
+
         //20.	Verify that the results are displayed from new to old year.
 
-        List <WebElement> years = driver.findElements(By.xpath("//h4[@class = 'srp-list-item-basic-info-model']"));
-        ArrayList<String> sortedYears = new ArrayList<>();
+        List <WebElement> years = driver.findElements(By.xpath("//*//div[@class='srp-list-container  srp-list-container--srp']/child::article [contains(@id,\"listing_\")] //div[1]/h4"));
+        ArrayList<Integer> sortedYears = new ArrayList<>();
 
         for (WebElement we: years) {
-            sortedYears.add(we.getText()); 
+//           sortedYears.add(we);
+            String [] splits = we.getText().split(" ");
+            System.out.println(splits[0]);
+
+            Integer year = Integer.parseInt(splits[0]);
+
+            sortedYears.add(year);
         }
 
-        System.out.println(sortedYears);
 
-        ArrayList <String> expectedYears = new ArrayList<>();
-        for (String s: sortedYears) {
+        ArrayList <Integer> expectedYears = new ArrayList<>();
+        for (Integer s: sortedYears) {
             expectedYears.add(s);
             
         }
@@ -236,7 +251,7 @@ public class AutomationProject3 {
         System.out.println(expectedYears);
 
 
-        //Assert.assertEquals(sortedYears, expectedYears);
+        Assert.assertEquals(sortedYears, expectedYears);
 
 
 
@@ -246,15 +261,7 @@ public class AutomationProject3 {
 
 
     }
-//    public static List<String> getElementsText(List<WebElement> list) {
-//        List<String> elemTexts = new ArrayList<>();
-//        for (WebElement el : list) {
-//            if (!el.getText().isEmpty()) {
-//                elemTexts.add(el.getText());
-//            }
-//        }
-//        return elemTexts;
-//    }
+
 
 
 
